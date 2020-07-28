@@ -1,0 +1,17 @@
+{
+  "openapi": "3.0.0",
+  "servers": [
+    {
+      "url": "http://localhost:3000/api/v1",
+      "description": "Local server"
+    },
+    {
+      "url": "https://app-dev.herokuapp.com/api/v1",
+      "description": "DEV Env"
+    },
+    {
+      "url": "https://app-uat.herokuapp.com/api/v1",
+      "description": "UAT Env"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql
+    container_name: db
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+      - ./dump/init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-restapi}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-password}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+      MYSQL_USER: ${DB_USER:-user}
+    networks:
+      - backend
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: pma
+    links:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+      PMA_USER: ${DB_USER:-user}
+      PMA_PASSWORD: ${DB_PASSWORD:-password}
+    restart: always
+    ports:
+      - 7000:80
+    networks:
+      - backend
+
+  restapi:
+    image: restapi
+    container_name: api
+    build:
+      context: .
+    volumes:
+      - ./src/:/usr/src/app/src
+    links:
+      - mysql
+    restart: always
+    ports:
+      - 3000:3000
+    networks:
+      - backend
+
+networks:
+  backend:
